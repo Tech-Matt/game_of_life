@@ -1,0 +1,3 @@
+-Finisci le eccezioni
+-Fai l'algoritmo principale
+-Crea un menù dove ci sono diversi 'seed' iniziali e una scelta per creare un seed casuale
