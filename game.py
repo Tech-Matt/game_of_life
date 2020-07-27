@@ -1,24 +1,29 @@
-#Conway Game of Life
+# Conway Game of Life
 
 import pygame
 import random
 
+# Debugging
+import pdb
 
-#PYGAME INITIALIZATION
+
+# PYGAME INITIALIZATION
 success, failure = pygame.init()
 
 screen_width = 800
 screen_height = 600
 
-screen = pygame.display.set_mode((screen_width, screen_height)) #Init the screen
-time = pygame.time.Clock() #Time from startup
-FPS = 5
+screen = pygame.display.set_mode((screen_width, screen_height))  # Init the screen
+time = pygame.time.Clock()  # Time from startup
+surface = pygame.Surface(screen.get_size())
+surface = surface.convert()
+FPS = 1
 
-#Screen Area = 480000 px (width * height)
-#Area of a cell = 100px --> 4800 Cell
+# Screen Area = 480000 px (width * height)
+# Area of a cell = 1600px --> 300 Cell
 
-BLACK = (0, 0, 0)#Live cell
-WHITE = (255, 255, 255)#dead cell
+BLACK = (0, 0, 0)  # Live cell
+WHITE = (255, 255, 255)  # dead cell
 
 
 class Cell:
@@ -30,7 +35,7 @@ class Cell:
     def __init__(self, x, y, alive):
         self.x = x
         self.y = y
-        self.size = 10 #it's a square
+        self.size = 40 #it's a square
         self.alive = alive
         if self.alive == 1:
             self.color = BLACK
@@ -38,20 +43,23 @@ class Cell:
             self.color = WHITE
 
 #Function needed in the next function ------------------------------------------------
-def checkAlive(cell, cellArray, curr_x, curr_y, counter):
-    """ Check wheter the current cell near the original cell is alive. If it is alive it adds 1 to the counter
-
+def checkAlive(cell, cellArray, curr_x, curr_y):
+    """ Check wheter the current cell near the original cell is alive. If it is alive it returns 1
+        else returns 0
         cell: instance of the original cell
         cellArray: cell list with all the initialized cells
         curr_x: x coordinate of the cell which will be examined
         curr_y: y coordinate of the cell which will be examined
-        counter: variable that is updated whenever a cell near to original has the "alive" attribute == 1
     """
 
     for current_cell in cellArray:
         if (current_cell.x == curr_x and current_cell.y == curr_y):
             if (current_cell.alive == 1):
-                counter += 1
+                return 1
+            else:
+                return 0
+    #If there is some problem
+    return 0
 
 
 #Function to find the neighbours of a cell ---------------------------------------------------
@@ -75,19 +83,19 @@ def neighbour(cells, cell):
         current_x = 1
         current_y = 0
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell below current ----------------------------------------
         current_x = 1
         current_y = 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell below original cell
         current_x = 0
         current_y = 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Return the number of neighbours
         return num_neighbours
@@ -98,17 +106,17 @@ def neighbour(cells, cell):
         current_x = screen_width - cell.size
         current_y = 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the left of current -----------------------------------
         current_x -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the left of original
         current_y = 0
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Return the number of neighbours
         return num_neighbours
@@ -120,17 +128,17 @@ def neighbour(cells, cell):
         current_x = 0
         current_y = (screen_height - cell.size) - 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the right of current ------------------------------------------
         current_x += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell below current ---------------------------------------------
         current_y += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Return the number of neighbours
         return num_neighbours
@@ -144,17 +152,17 @@ def neighbour(cells, cell):
         current_x = (screen_width - cell.size) - 1
         current_y = screen_height - cell.size
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell on top of current -------------------------------------------------------
         current_y -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the right of current
         current_x += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Return the number of neighbours
         return num_neighbours
@@ -166,27 +174,27 @@ def neighbour(cells, cell):
         current_x = x + 1
         current_y = 0
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell below current
         current_y += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell below original
         current_x = x
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the left of current
         current_x -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the left of original
         current_y -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Return the number of neighbours
         return num_neighbours
@@ -198,27 +206,27 @@ def neighbour(cells, cell):
         current_x = x - 1
         current_y = y
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell on top of current
         current_y -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the right of current
         current_x += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the right of current
         current_x += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell below current
         current_y += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Return the number of neighbours
         return num_neighbours
@@ -230,27 +238,27 @@ def neighbour(cells, cell):
         current_x = x
         current_y = y - 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the right of current
         current_x += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell below current
         current_y += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell below current
         current_y += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the left of current
         current_x -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
 
         return num_neighbours
@@ -262,27 +270,27 @@ def neighbour(cells, cell):
         current_x = x
         current_y = y + 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the left of current
         current_x -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell on top of current
         current_y -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell on top of current
         current_y -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the right of current
         current_x += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         return num_neighbours
 
@@ -294,42 +302,42 @@ def neighbour(cells, cell):
         current_x = x
         current_y = y - 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the right of original
         current_x += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell below current
         current_y += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell below current
         current_y += 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the left of current
         current_x -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell to the left of current
         current_x -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell on top of current
         current_y -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         #Cell on top of current
         current_y -= 1
 
-        checkAlive(cell, cells, current_x, current_y, num_neighbours)
+        num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
         return num_neighbours
 
@@ -384,7 +392,6 @@ while not done:
 
 
     #SIMULATION --------------------------------------------------------------------
-
     #Run the algorithm of the game and update the screen (Moore algorithm)
     for cell in cell_array:
         if neighbour(cell_array, cell) in (2, 3): #2 or 3 live neighbours (survive)
@@ -396,6 +403,7 @@ while not done:
         elif ((cell.alive == 0) and (neighbour(cell_array, cell) == 3)): #Dead cell with 3 live neigh (live)
             cell.alive == 1
 
+
     #Debug
     print("Algorithm succesful.")
 
@@ -405,4 +413,5 @@ while not done:
     #Debug
     print("Cell loaded to the screen")
 
+    screen.fill(WHITE)
     pygame.display.flip() #To update the screen
