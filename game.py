@@ -3,9 +3,7 @@
 import pygame
 import random
 
-# Debugging
-import pdb
-
+import pdb#Debug
 
 # PYGAME INITIALIZATION
 success, failure = pygame.init()
@@ -15,8 +13,6 @@ screen_height = 600
 
 screen = pygame.display.set_mode((screen_width, screen_height))  # Init the screen
 time = pygame.time.Clock()  # Time from startup
-surface = pygame.Surface(screen.get_size())
-surface = surface.convert()
 FPS = 1
 
 # Screen Area = 480000 px (width * height)
@@ -29,7 +25,7 @@ WHITE = (255, 255, 255)  # dead cell
 class Cell:
     """ x: x coordinate
         y: y coordinate
-        size: width and height (same)
+        size: width and height (same, square)
         alive: int (boolean, 0 o 1), to track the status of a cell (live or dead), at the startup is random
     """
     def __init__(self, x, y, alive):
@@ -37,10 +33,10 @@ class Cell:
         self.y = y
         self.size = 40 #it's a square
         self.alive = alive
-        if self.alive == 1:
-            self.color = BLACK
-        elif self.alive == 0:
-            self.color = WHITE
+        #if self.alive == 1:
+            #self.color = BLACK
+        #elif self.alive == 0:
+            #self.color = WHITE
 
 #Function needed in the next function ------------------------------------------------
 def checkAlive(cell, cellArray, curr_x, curr_y):
@@ -345,24 +341,32 @@ def neighbour(cells, cell):
 
 
 #CELL INITIALIZATION
-cell_array = []
+cell_array = [] #2D array containing the cells in order[x, y]
 #Useful variable in the for loop
 x = 0
 y = 0
 init = False #Become true when Initialization is completed
 
+#Array Initialization
+for i in range(screen_width):
+    cell_array.append([])
+    for j in range(screen_height):
+        cell_array[i].append([])
 
-#Initialization
+#First Value
+cell_array[x][y] = Cell(x, y, random.randint(0, 1))
+
+#Cell Initialization
 while not init:
-
-    is_alive = random.choices([0,1], weights = (95, 5), k=1)[0]#Randomly spawn cells with probability (Dead 95%, Alive 5 %)
+    is_alive = random.choices([0,1], weights = (90, 10), k=1)[0]#Randomly spawn cells with probability (Dead 95%, Alive 5 %)
     cell = Cell(x, y, is_alive)#Single object
     x += cell.size
-    cell_array.append(cell)
-    if x == screen_width: #End of a row
+    cell_array[x][y] = cell
+    #cell_array.append(cell)
+    if x == screen_width - cell.size: #End of a row
         x = 0
         y += cell.size
-    if y == screen_height:#Last row
+    if y == screen_height - cell.size:#Last row
         init = True
 
 
