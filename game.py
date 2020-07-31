@@ -2,8 +2,7 @@
 
 import pygame
 import random
-
-import pdb#Debug
+import sys
 
 # PYGAME INITIALIZATION
 success, failure = pygame.init()
@@ -18,8 +17,21 @@ FPS = 1
 # Screen Area = 480000 px (width * height)
 # Area of a cell = 1600px --> 300 Cell
 
+CELL_WIDTH = 40
+
 BLACK = (0, 0, 0)  # Live cell
 WHITE = (255, 255, 255)  # dead cell
+
+def color_decode(integer):
+    """Return BLACK when integer == 1
+       Return WHITE when integer == 0
+    """
+    if integer == 1:
+        return BLACK
+    elif integer == 0:
+        return WHITE
+    else:
+        print("Value error in 'alive' attribute")
 
 
 class Cell:
@@ -31,12 +43,14 @@ class Cell:
     def __init__(self, x, y, alive):
         self.x = x
         self.y = y
-        self.size = 40 #it's a square
+        self.size = CELL_WIDTH #it's a square
         self.alive = alive
-        #if self.alive == 1:
-            #self.color = BLACK
-        #elif self.alive == 0:
-            #self.color = WHITE
+
+    def draw():#Draw the cell into the screen
+        pygame.draw.rect(screen, color_decode(self.alive), pygame.Rect(self.x, self.y, self.size, self.size))
+
+    def update():
+        pass
 
 #Function needed in the next function ------------------------------------------------
 def checkAlive(cell, cellArray, curr_x, curr_y):
@@ -347,10 +361,10 @@ x = 0
 y = 0
 init = False #Become true when Initialization is completed
 
-#Array Initialization
-for i in range(screen_width):
+#Array Initialization (X, Y matrix)
+for i in range(screen_width / CELL_WIDTH):
     cell_array.append([])
-    for j in range(screen_height):
+    for j in range(screen_height / CELL_WIDTH):
         cell_array[i].append([])
 
 #First Value
@@ -361,8 +375,7 @@ while not init:
     is_alive = random.choices([0,1], weights = (90, 10), k=1)[0]#Randomly spawn cells with probability (Dead 95%, Alive 5 %)
     cell = Cell(x, y, is_alive)#Single object
     x += cell.size
-    cell_array[x][y] = cell
-    #cell_array.append(cell)
+    cell_array[x / CELL_WIDTH][y / CELL_WIDTH] = cell
     if x == screen_width - cell.size: #End of a row
         x = 0
         y += cell.size
