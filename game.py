@@ -4,6 +4,9 @@ import pygame
 import random
 import sys
 
+#Class cell
+from cell import *
+
 # PYGAME INITIALIZATION
 success, failure = pygame.init()
 
@@ -17,40 +20,6 @@ FPS = 1
 # Screen Area = 480000 px (width * height)
 # Area of a cell = 1600px --> 300 Cell
 
-CELL_WIDTH = 40
-
-BLACK = (0, 0, 0)  # Live cell
-WHITE = (255, 255, 255)  # dead cell
-
-def color_decode(integer):
-    """Return BLACK when integer == 1
-       Return WHITE when integer == 0
-    """
-    if integer == 1:
-        return BLACK
-    elif integer == 0:
-        return WHITE
-    else:
-        print("Value error in 'alive' attribute")
-
-
-class Cell:
-    """ x: x coordinate
-        y: y coordinate
-        size: width and height (same, square)
-        alive: int (boolean, 0 o 1), to track the status of a cell (live or dead), at the startup is random
-    """
-    def __init__(self, x, y, alive):
-        self.x = x
-        self.y = y
-        self.size = CELL_WIDTH #it's a square
-        self.alive = alive
-
-    def draw():#Draw the cell into the screen
-        pygame.draw.rect(screen, color_decode(self.alive), pygame.Rect(self.x, self.y, self.size, self.size))
-
-    def update():
-        pass
 
 #Function needed in the next function ------------------------------------------------
 def checkAlive(cell, cellArray, curr_x, curr_y):
@@ -362,30 +331,32 @@ y = 0
 init = False #Become true when Initialization is completed
 
 #Array Initialization (X, Y matrix)
-for i in range(screen_width / CELL_WIDTH):
+for i in range(int(screen_width / CELL_WIDTH)):
     cell_array.append([])
-    for j in range(screen_height / CELL_WIDTH):
+    for j in range(int(screen_height / CELL_WIDTH)):
         cell_array[i].append([])
 
 #First Value
 cell_array[x][y] = Cell(x, y, random.randint(0, 1))
+pygame.draw.rect(screen, cell_array[0][0].color(), pygame.Rect(cell_array[0][0].x, cell_array[0][0].y, cell_array[0][0].size, cell_array[0][0].size))
 
 #Cell Initialization
 while not init:
-    is_alive = random.choices([0,1], weights = (90, 10), k=1)[0]#Randomly spawn cells with probability (Dead 95%, Alive 5 %)
+    is_alive = random.choices([0,1], weights = (90, 10), k=1)[0]#Randomly spawn cells with probability (Dead 90%, Alive 10 %)
     cell = Cell(x, y, is_alive)#Single object
+    pygame.draw.rect(screen, cell.color(), pygame.Rect(cell.x, cell.y, cell.size, cell.size))
     x += cell.size
-    cell_array[x / CELL_WIDTH][y / CELL_WIDTH] = cell
-    if x == screen_width - cell.size: #End of a row
+    cell_array[int(x / CELL_WIDTH) - 1][int(y / CELL_WIDTH) - 1] = cell
+    if x == screen_width: #End of a row
         x = 0
         y += cell.size
-    if y == screen_height - cell.size:#Last row
+    if y == screen_height:#Last row
         init = True
 
 
 #DRAWING CELLS
-for cl in cell_array:
-    pygame.draw.rect(screen, cl.color, pygame.Rect(cl.x, cl.y, cl.size, cl.size))#Draw any single cell
+#for cl in cell_array:
+    #cl.draw()
 
 pygame.display.flip() #To update the screen
 

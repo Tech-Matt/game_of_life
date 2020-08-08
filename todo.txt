@@ -1,4 +1,0 @@
--Reconsider the cell Initialization model. It is more time-efficient to store the cell
- in a 2D array
- -Update the functions to calculate the neighbours
- -Update the drawing process
