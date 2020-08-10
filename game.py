@@ -283,7 +283,7 @@ def neighbour(cells, cell):
 
         num_neighbours += checkAlive(cell, cells, current_x, current_y)
 
-        #Cell to the right of original
+        #Cell to the right of current
         current_x += 1
 
         num_neighbours += checkAlive(cell, cells, current_x, current_y)
@@ -321,8 +321,6 @@ def neighbour(cells, cell):
         return num_neighbours
 
 
-
-
 #CELL INITIALIZATION
 cell_array = [] #2D array containing the cells in order[x, y]
 #Useful variable in the for loop
@@ -354,10 +352,6 @@ while not init:
         init = True
 
 
-#DRAWING CELLS
-#for cl in cell_array:
-    #cl.draw()
-
 pygame.display.flip() #To update the screen
 
 #Debug
@@ -368,6 +362,7 @@ done = False #Check whether the program should run
 
 #Main loop
 while not done:
+
     #FPS
     time.tick(FPS)
 
@@ -381,23 +376,32 @@ while not done:
 
     #SIMULATION --------------------------------------------------------------------
     #Run the algorithm of the game and update the screen (Moore algorithm)
-    for cell in cell_array:
-        if neighbour(cell_array, cell) in (2, 3): #2 or 3 live neighbours (survive)
-            cell.alive = 1
-        elif neighbour(cell_array, cell) < 2: #Few than 2 live neighbours (dies)
-            cell.alive = 0
-        elif neighbour(cell_array, cell) > 3: #More than 3 live neighbours (dies)
-            cell.alive = 0
-        elif ((cell.alive == 0) and (neighbour(cell_array, cell) == 3)): #Dead cell with 3 live neigh (live)
-            cell.alive == 1
+    for i in range(int(screen_width / CELL_WIDTH)):
+        for j in range(int(screen_height / CELL_WIDTH)):
+
+            try:
+                if cell_array[i][j].neighbours(cell_array) in (2, 3): #2 or 3 live neighbours (survive)
+                    cell_array[i][j].alive = 1
+                elif cell_array[i][j].neighbours(cell_array) < 2: #Few than 2 live neighbours (dies)
+                    cell_array[i][j].alive = 0
+                elif cell_array[i][j].neighbours(cell_array) > 3: #More than 3 live neighbours (dies)
+                    cell_array[i][j].alive = 0
+                elif ((cell_array[i][j].alive == 0) and (cell_array[i][j].neighbours(cell_array) == 3)): #Dead cell with 3 live neigh (live)
+                    cell_array[i][j].alive == 1
+
+            except Exception as e:
+                print(e)
 
 
     #Debug
     print("Algorithm succesful.")
 
     #DRAWING CELLS
-    for cl in cell_array:
-        pygame.draw.rect(screen, cl.color, pygame.Rect(cl.x, cl.y, cl.size, cl.size))
+    for i in range(int(screen_width / CELL_WIDTH)):
+        for j in range(int(screen_height / CELL_WIDTH)):
+            pygame.draw.rect(screen, cell_array[i][j].color(), pygame.Rect(cell_array[i][j].x, cell_array[i][j].y, cell_array[i][j].size, cell_array[i][j].size))
+
+
     #Debug
     print("Cell loaded to the screen")
 
