@@ -18,12 +18,13 @@ def color_decode(integer):
 
 
 class Cell:
-    """ x: x coordinate
-        y: y coordinate
-        size: width and height (same, square)
-        alive: int (boolean, 0 o 1), to track the status of a cell (live or dead), at the startup is random
-    """
+
     def __init__(self, x, y, alive):
+        """ x: x coordinate
+            y: y coordinate
+            alive: int (boolean, 0 o 1), to track the status of a cell (live or dead),
+            at startup is random
+        """
         self.x = x
         self.y = y
         self.size = CELL_WIDTH #it's a square

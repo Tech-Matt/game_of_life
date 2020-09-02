@@ -1,5 +1,6 @@
 #TODO
 
+- [ ] Find a more flexible way of storing the cell and initialize them
 - [ ] Fix the index error in the neighbours function
 - [ ] Write the exceptions to the neighbours algorithm
 - [ ] Fix the pygame screen update error

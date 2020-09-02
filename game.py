@@ -15,10 +15,11 @@ screen_height = 600
 
 screen = pygame.display.set_mode((screen_width, screen_height))  # Init the screen
 time = pygame.time.Clock()  # Time from startup
-FPS = 1
+FPS = 5
 
 # Screen Area = 480000 px (width * height)
 # Area of a cell = 1600px --> 300 Cell
+#Each cell: 40px * 40px
 
 
 #Function needed in the next function ------------------------------------------------
@@ -323,7 +324,6 @@ def neighbour(cells, cell):
 
 #CELL INITIALIZATION
 cell_array = [] #2D array containing the cells in order[x, y]
-#Useful variable in the for loop
 x = 0
 y = 0
 init = False #Become true when Initialization is completed
@@ -334,11 +334,8 @@ for i in range(int(screen_width / CELL_WIDTH)):
     for j in range(int(screen_height / CELL_WIDTH)):
         cell_array[i].append([])
 
-#First Value
-cell_array[x][y] = Cell(x, y, random.randint(0, 1))
-pygame.draw.rect(screen, cell_array[0][0].color(), pygame.Rect(cell_array[0][0].x, cell_array[0][0].y, cell_array[0][0].size, cell_array[0][0].size))
-
 #Cell Initialization
+for i in range()
 while not init:
     is_alive = random.choices([0,1], weights = (90, 10), k=1)[0]#Randomly spawn cells with probability (Dead 90%, Alive 10 %)
     cell = Cell(x, y, is_alive)#Single object
