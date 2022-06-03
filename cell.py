@@ -14,7 +14,7 @@ def color_decode(integer):
     elif integer == 0:
         return WHITE
     else:
-        print("Value error in 'alive' attribute")
+        print("[VALUE ERROR] in alive attribute")
 
 
 class Cell:
