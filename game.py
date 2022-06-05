@@ -14,19 +14,23 @@ SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 400
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))  # Init the screen
+pygame.display.set_caption("Game Of Life")
 time = pygame.time.Clock()  # Time from startup
 FPS = 2
 
 #Number of cells for every row and column
-NUM_X_CELLS = SCREEN_WIDTH // CELL_WIDTH;
+NUM_X_CELLS = SCREEN_WIDTH // CELL_WIDTH; 
 NUM_Y_CELLS = SCREEN_HEIGHT // CELL_WIDTH;
+
+MAX_X_POS = NUM_X_CELLS - 1
+MAX_Y_POS = NUM_Y_CELLS - 1
 
 #Model parameters
 CELL_SPAWN_CHANCE = 90
 
 
 
-def neighbour(cells, cell):
+def neighbours(cells, cell):
     """Give as output the number of neighbours of a cell (only neighbours with the alive attribute = 1)
 
         cells: List containing all the instances of the initialized cells
@@ -63,9 +67,9 @@ def neighbour(cells, cell):
         return num_neighbours
 
     #Upper-right corner (x = window, y = 0)!*!*!*!*!**!*!*!*!*!*!*!*!*!*!*!*!*!*!**!*!*!*!*!*!*!*!
-    elif (x == SCREEN_WIDTH - cell.size and y == 0):
+    elif (x == MAX_X_POS and y == 0):
         #Cell below -------------------------------------
-        next_x = SCREEN_WIDTH - cell.size
+        next_x = MAX_X_POS
         next_y = 1
 
         num_neighbours += cells[next_x][next_y].alive
@@ -84,11 +88,11 @@ def neighbour(cells, cell):
         return num_neighbours
 
     #Lower-left corner (x = 0, y = window) !*!*!*!**!*!!*!**!*!!**!*!*!*!*!*
-    elif(x == 0 and y == (SCREEN_HEIGHT - cell.size)):
+    elif(x == 0 and y == MAX_Y_POS):
 
         #Cell over original ----------------------
         next_x = 0
-        next_y = (SCREEN_HEIGHT - cell.size) - 1
+        next_y = MAX_Y_POS - 1
 
         num_neighbours += cells[next_x][next_y].alive
 
@@ -108,11 +112,11 @@ def neighbour(cells, cell):
 
 
     #Lower right corner !*!*!*!*!*!!*!*!*!*!*!*!**!!*!*!*
-    elif (x == (SCREEN_WIDTH - cell.size) and y == (SCREEN_HEIGHT - cell.size)):
+    elif (x == MAX_X_POS and y == MAX_Y_POS):
 
         #Cell to the left of original ------------------------------------------------
-        next_x = (SCREEN_WIDTH - cell.size) - 1
-        next_y = SCREEN_HEIGHT - cell.size
+        next_x = MAX_X_POS - 1
+        next_y = MAX_Y_POS
 
         num_neighbours += cells[next_x][next_y].alive
 
@@ -131,7 +135,7 @@ def neighbour(cells, cell):
 
 
     #If the cell is in the first row (y = 0) (2 corners excluded) !*!*!*!*!*!!*!!*!*!*!*!
-    elif (y == 0 and (x != 0 and x != (SCREEN_WIDTH - cell.size))):
+    elif (y == 0 and (x != 0 and x != MAX_X_POS)):
         #Cell to the right of original
         next_x = x + 1
         next_y = 0
@@ -163,7 +167,7 @@ def neighbour(cells, cell):
 
 
     #If the cell is in the last row (y = screen_height) 2 corners excluded !*!*!*!*!*!*!*!!*!*
-    elif (y == (SCREEN_HEIGHT - cell.size) and (x != 0 and x != (SCREEN_WIDTH - cell.size))):
+    elif (y == MAX_Y_POS and (x != 0 and x != MAX_X_POS)):
         #Cell to the left of original
         next_x = x - 1
         next_y = y
@@ -195,7 +199,7 @@ def neighbour(cells, cell):
 
 
     #If the cell is in the first column (2 corners excluded) !*!*!*!*!*!*!*!*!*!*!*!*
-    elif (x == 0 and (y != 0 and y != (SCREEN_HEIGHT - cell.size))):
+    elif (x == 0 and (y != 0 and y != MAX_Y_POS)):
         #Cell on top of original
         next_x = x
         next_y = y - 1
@@ -227,7 +231,7 @@ def neighbour(cells, cell):
 
 
     #If the cell is in the last column (x = screen width) !*!*!*!*!*!*!*!!**!!*
-    elif (x == (SCREEN_WIDTH - cell.size) and (y != 0 and y != (SCREEN_HEIGHT - cell.size))):
+    elif (x == MAX_X_POS and (y != 0 and y != MAX_Y_POS)):
         #Cell below original
         next_x = x
         next_y = y + 1
@@ -334,7 +338,7 @@ while not init:
     
 
 
-pygame.display.flip() #To update the screen
+pygame.display.update() #To update the screen
 
 #Debug
 print("Initialization Completed.")
@@ -358,21 +362,21 @@ while not done:
 
     #SIMULATION --------------------------------------------------------------------
     #Run the algorithm of the game and update the screen (Moore algorithm)
-    for i in range(int(SCREEN_WIDTH / CELL_WIDTH)):
-        for j in range(int(SCREEN_HEIGHT / CELL_WIDTH)):
+    for i in range(NUM_X_CELLS):
+        for j in range(NUM_Y_CELLS):
 
-            try:
-                if cell_array[i][j].neighbours(cell_array) in (2, 3): #2 or 3 live neighbours (survive)
+            #try:
+                if neighbours(cell_array, cell_array[i][j]) in (2, 3): #2 or 3 live neighbours (survive)
                     cell_array[i][j].alive = 1
-                elif cell_array[i][j].neighbours(cell_array) < 2: #Few than 2 live neighbours (dies)
+                elif neighbours(cell_array, cell_array[i][j]) < 2: #Few than 2 live neighbours (dies)
                     cell_array[i][j].alive = 0
-                elif cell_array[i][j].neighbours(cell_array) > 3: #More than 3 live neighbours (dies)
+                elif neighbours(cell_array, cell_array[i][j]) > 3: #More than 3 live neighbours (dies)
                     cell_array[i][j].alive = 0
-                elif ((cell_array[i][j].alive == 0) and (cell_array[i][j].neighbours(cell_array) == 3)): #Dead cell with 3 live neigh (live)
+                elif ((cell_array[i][j].alive == 0) and (neighbours(cell_array, cell_array[i][j]) == 3)): #Dead cell with 3 live neigh (live)
                     cell_array[i][j].alive == 1
 
-            except Exception as e:
-                print(e)
+            # except Exception as e:
+            #     print(e)
 
 
     #Debug
@@ -388,4 +392,4 @@ while not done:
     print("Cell loaded to the screen")
 
     screen.fill(WHITE)
-    pygame.display.flip() #To update the screen
+    pygame.display.update() #To update the screen
