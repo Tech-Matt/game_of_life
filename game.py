@@ -322,7 +322,7 @@ for i in range(NUM_X_CELLS):
 
 #Cell Initialization
 while not init:
-    is_alive = random.choices([0,1], weights = (CELL_SPAWN_CHANCE, 1- CELL_SPAWN_CHANCE), k=1)[0]#Randomly spawn cells with probability (Dead 90%, Alive 10 %)
+    is_alive = random.choices([0,1], weights = (CELL_SPAWN_CHANCE, 100- CELL_SPAWN_CHANCE), k=1)[0]#Randomly spawn cells with probability (Dead 90%, Alive 10 %)
     cell = Cell(x, y, is_alive)#Single object
     cell_array[x][y] = cell
 
