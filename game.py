@@ -322,7 +322,7 @@ for i in range(NUM_X_CELLS):
 
 #Cell Initialization
 while not init:
-    is_alive = random.choices([0,1], weights = (CELL_SPAWN_CHANCE, 1- CELL_SPAWN_CHANCE), k=1)[0]#Randomly spawn cells with probability (Dead 90%, Alive 10 %)
+    is_alive = random.choices([0,1], weights = (CELL_SPAWN_CHANCE, 100- CELL_SPAWN_CHANCE), k=1)[0]#Randomly spawn cells with probability (Dead 90%, Alive 10 %)
     cell = Cell(x, y, is_alive)#Single object
     cell_array[x][y] = cell
 
@@ -385,11 +385,11 @@ while not done:
     #DRAWING CELLS
     for i in range(int(SCREEN_WIDTH / CELL_WIDTH)):
         for j in range(int(SCREEN_HEIGHT / CELL_WIDTH)):
-            pygame.draw.rect(screen, cell_array[i][j].color(), pygame.Rect(cell_array[i][j].x, cell_array[i][j].y, cell_array[i][j].size, cell_array[i][j].size))
+            pygame.draw.rect(screen, cell_array[i][j].color(), pygame.Rect(cell_array[i][j].x*CELL_WIDTH, cell_array[i][j].y*CELL_WIDTH, cell_array[i][j].size, cell_array[i][j].size))
 
 
     #Debug
     print("Cell loaded to the screen")
 
-    screen.fill(WHITE)
+    #screen.fill(WHITE) #Overwiting the screen Blank
     pygame.display.update() #To update the screen
