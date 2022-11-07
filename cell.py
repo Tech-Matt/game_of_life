@@ -4,6 +4,10 @@ CELL_WIDTH = 40
 BLACK = (0, 0, 0)  # Living cell
 WHITE = (255, 255, 255)  # Dead cell
 
+MOORE_CELL = True # Moore Neighborhood
+VON_NUEMANN_CELL = False # Von Nuemann Neighborhood
+CELL_TYPE = MOORE_CELL
+
 
 def color_decode(integer):
     """Return BLACK when integer == 1
@@ -59,11 +63,14 @@ class Cell:
             maxY = self.y + 1
         # Loop Ranges counting the Alive
         counter = 0
-        for xIter in range(minX, maxX+1):
-            for yIter in range(minY, maxY+1):
-                if array[xIter][yIter].alive:
-                    counter += 1
-        return counter - self.alive
+        if CELL_TYPE:
+            for xIter in range(minX, maxX+1):
+                for yIter in range(minY, maxY+1):
+                    if array[xIter][yIter].alive:
+                        counter += 1
+            return counter - self.alive
+        else:
+            return array[self.x][minY].alive + array[self.x][maxY].alive + array[minX][self.y].alive + array[maxX][self.y].alive
     
     
 
